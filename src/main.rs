@@ -1,7 +1,9 @@
 mod todo;
+mod dbhandler;
 
 use std::time::{SystemTime};
 use std::io::Write;
+use crate::dbhandler::show_todos;
 
 fn prompt(name:&str) -> String {
     let mut line = String::new();
@@ -20,8 +22,8 @@ fn main() {
         match input.as_str() {
             "help" => { print!("This is a console app to create and view todos. \
                                 Available commands:\n");}
-            "show" => { }
-            "add" =>
+            "show" => { show_todos(); }
+            "add" => {  }
             "exit" => { break; }
             _ => {println!("Wrong input");}
         }
