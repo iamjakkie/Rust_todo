@@ -1,3 +1,5 @@
+mod todo;
+
 use std::time::{SystemTime};
 use std::io::Write;
 
@@ -10,15 +12,18 @@ fn prompt(name:&str) -> String {
     return line.trim().to_string()
 }
 
+
+
 fn main() {
     loop {
         let input=prompt("> ");
-        if input=="now" {
-            let unixtime = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH).unwrap();
-            print!("Current Unix time is {:?}\n", unixtime);
+        match input.as_str() {
+            "help" => { print!("This is a console app to create and view todos. \
+                                Available commands:\n");}
+            "show" => { }
+            "add" =>
+            "exit" => { break; }
+            _ => {println!("Wrong input");}
         }
-        else if input=="exit" {
-            break;
-        };
     }
 }
