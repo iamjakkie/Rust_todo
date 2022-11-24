@@ -4,6 +4,6 @@ diesel::table! {
     todos (id) {
         id -> Int4,
         name -> Varchar,
-        description -> Nullable<Text>,
+        description -> Text,
     }
 }
