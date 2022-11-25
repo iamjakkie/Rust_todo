@@ -2,7 +2,7 @@ use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use dotenvy::dotenv;
 use std::env;
-use self::models::*;
+use self::models::{Todo, NewTodo};
 
 pub mod models;
 pub mod schema;
@@ -30,4 +30,18 @@ pub fn show_todos() {
         println!("-----------\n");
         println!("{}", todo.description);
     }
+}
+
+pub fn create_todo(name: &str, description: &str) -> Todo {
+    use crate::dbhandler::schema::todos;
+
+    let new_todo = NewTodo { name, description };
+
+    let connection = &mut establish_connection();
+
+
+    diesel::insert_into(todos::table)
+        .values(&new_todo)
+        .get_result(connection)
+        .expect("Error saving new post")
 }
