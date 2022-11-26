@@ -47,3 +47,14 @@ pub fn create_todo(name: &str, description: &str) -> Todo {
         .get_result(connection)
         .expect("Error saving new post")
 }
+
+pub fn delete_todo(del_id: i32) {
+    use self::schema::todos::dsl::*;
+
+    let connection = &mut establish_connection();
+    let num_deleted = diesel::delete(todos.filter(id.eq(&del_id)))
+        .execute(connection)
+        .expect("Error deleting posts");
+
+    println!("Deleted {} posts", num_deleted);
+}

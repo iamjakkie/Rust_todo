@@ -4,7 +4,7 @@ mod dbhandler;
 use std::time::{SystemTime};
 use std::io::Write;
 use crate::dbhandler::models::Todo;
-use crate::dbhandler::{show_todos, create_todo};
+use crate::dbhandler::{show_todos, create_todo, delete_todo};
 
 fn prompt(name:&str) -> String {
     let mut line = String::new();
@@ -31,6 +31,11 @@ fn main() {
                 let desc = prompt(": ");
 
                 let todo = create_todo(&*name, &*desc);
+            }
+            "remove" => {
+                print!("Insert todo's id");
+                let id:i32 = prompt(": ").parse().unwrap();
+                delete_todo(id);
             }
             "exit" => { break; }
             _ => {println!("Wrong input");}
