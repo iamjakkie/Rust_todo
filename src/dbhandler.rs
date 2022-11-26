@@ -25,10 +25,12 @@ pub fn show_todos() {
         .expect("Error loading posts");
 
     println!("Displaying {} todos", results.len());
+    println!("Id\tName:Description");
+    println!("=========================");
     for todo in results {
-        println!("{}", todo.name);
-        println!("-----------\n");
-        println!("{}", todo.description);
+        print!("{}\t", todo.id);
+        print!("{}:", todo.name);
+        print!("{}\n", todo.description);
     }
 }
 
