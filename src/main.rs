@@ -8,7 +8,7 @@ use eframe::egui::{CentralPanel, Context};
 
 
 use crate::dbhandler::models::Todo;
-use crate::dbhandler::{show_todos, create_todo, delete_todo};
+use crate::dbhandler::{show_todos, create_todo, delete_todo, get_todos};
 
 fn prompt(name:&str) -> String {
     let mut line = String::new();
@@ -19,22 +19,26 @@ fn prompt(name:&str) -> String {
     return line.trim().to_string()
 }
 #[derive(Default)]
-struct Todos;
+struct Todos{
+    todos: Vec<Todo>
+}
 
 impl Todos {
     fn new(cc: &eframe::CreationContext<'_>) -> Self {
-        // Customize egui here with cc.egui_ctx.set_fonts and cc.egui_ctx.set_visuals.
-        // Restore app state using cc.storage (requires the "persistence" feature).
-        // Use the cc.gl (a glow::Context) to create graphics shaders and buffers that you can use
-        // for e.g. egui::PaintCallback.
-        Self::default()
+        Self {
+            todos: get_todos()
+        }
     }
 }
 
 impl App for Todos {
     fn update(&mut self, ctx: &Context, frame: &mut Frame) {
         CentralPanel::default().show(ctx, |ui| {
-            ui.label("Todo text");
+            for todo in &self.todos{
+                ui.label(&todo.id.to_string());
+                ui.label(&todo.name);
+                ui.label(&todo.description);
+            }
         });
     }
 }

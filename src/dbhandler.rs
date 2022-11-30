@@ -15,6 +15,18 @@ pub fn establish_connection() -> PgConnection {
         .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
 }
 
+pub fn get_todos() -> Vec<Todo> {
+    use self::schema::todos::dsl::*;
+
+    let connection = &mut establish_connection();
+    let results = todos
+        .limit(5)
+        .load::<Todo>(connection)
+        .expect("Error loading posts");
+
+    results
+}
+
 pub fn show_todos() {
     use self::schema::todos::dsl::*;
 
