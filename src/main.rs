@@ -4,11 +4,14 @@ mod dbhandler;
 use std::time::{SystemTime};
 use std::io::Write;
 use eframe::{App, Frame, NativeOptions, run_native};
-use eframe::egui::{CentralPanel, Context, ScrollArea};
-
+use eframe::egui::{Button, CentralPanel, Color32, Context, ScrollArea};
+use eframe::egui::widgets::Label;
 
 use crate::dbhandler::models::Todo;
 use crate::dbhandler::{show_todos, create_todo, delete_todo, get_todos};
+
+const PADDING: f32 = 5.0;
+const WHITE: Color32 = Color32::from_rgb(255, 255, 255);
 
 fn prompt(name:&str) -> String {
     let mut line = String::new();
@@ -29,17 +32,27 @@ impl Todos {
             todos: get_todos()
         }
     }
+
+    fn render_todo_cards(&self, ui: &mut eframe::egui::Ui) {
+        for todo in &self.todos{
+            //name
+            ui.add_space(PADDING);
+            let title: String = format!("-> {}", todo.name)
+            ui.colored_label(WHITE, title);
+            //desc
+            ui.add_space(PADDING);
+            let label = eframe::egui::widgets::Label::new(&todo.description).text_layout(Button)
+            ui.label(&todo.description);
+        }
+    }
 }
 
 impl App for Todos {
     fn update(&mut self, ctx: &Context, frame: &mut Frame) {
         CentralPanel::default().show(ctx, |ui| {
             ScrollArea::vertical().auto_shrink([false, false]).show(ui, |ui| {
-                for todo in &self.todos{
-                    ui.label(&todo.id.to_string());
-                    ui.label(&todo.name);
-                    ui.label(&todo.description);
-                }
+                self.render_todo_cards(ui);
+
             })
 
         });
