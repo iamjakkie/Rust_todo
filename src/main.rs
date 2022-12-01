@@ -4,7 +4,7 @@ mod dbhandler;
 use std::time::{SystemTime};
 use std::io::Write;
 use eframe::{App, Frame, NativeOptions, run_native};
-use eframe::egui::{CentralPanel, Context};
+use eframe::egui::{CentralPanel, Context, ScrollArea};
 
 
 use crate::dbhandler::models::Todo;
@@ -34,11 +34,14 @@ impl Todos {
 impl App for Todos {
     fn update(&mut self, ctx: &Context, frame: &mut Frame) {
         CentralPanel::default().show(ctx, |ui| {
-            for todo in &self.todos{
-                ui.label(&todo.id.to_string());
-                ui.label(&todo.name);
-                ui.label(&todo.description);
-            }
+            ScrollArea::vertical().auto_shrink([false, false]).show(ui, |ui| {
+                for todo in &self.todos{
+                    ui.label(&todo.id.to_string());
+                    ui.label(&todo.name);
+                    ui.label(&todo.description);
+                }
+            })
+
         });
     }
 }

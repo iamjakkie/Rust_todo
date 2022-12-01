@@ -20,7 +20,6 @@ pub fn get_todos() -> Vec<Todo> {
 
     let connection = &mut establish_connection();
     let results = todos
-        .limit(5)
         .load::<Todo>(connection)
         .expect("Error loading posts");
 
