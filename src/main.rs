@@ -4,7 +4,7 @@ mod dbhandler;
 use std::time::{SystemTime};
 use std::io::Write;
 use eframe::{App, Frame, NativeOptions, run_native};
-use eframe::egui::{Button, CentralPanel, Color32, Context, ScrollArea, Separator};
+use eframe::egui::{Button, CentralPanel, Color32, Context, Hyperlink, ScrollArea, Separator, TopBottomPanel};
 use eframe::egui::widgets::Label;
 
 use crate::dbhandler::models::Todo;
@@ -45,6 +45,17 @@ impl Todos {
             ui.label(&todo.description);
         }
     }
+
+    fn render_footer(&self, ui: &mut eframe::egui::Ui, ctx: &Context) {
+        TopBottomPanel::bottom("footer").show(ctx, |ui| {
+            ui.vertical_centered(|ui| {
+                ui.add_space(10.);
+                ui.add(Label::new("Jakub Kielbasiewicz"));
+                ui.add(Hyperlink::new("https://github.com/iamjakkie"));
+                ui.add_space(10.);
+            })
+        });
+    }
 }
 
 impl App for Todos {
@@ -54,8 +65,8 @@ impl App for Todos {
             ScrollArea::vertical().auto_shrink([false, false]).show(ui, |ui| {
                 self.render_todo_cards(ui);
 
-            })
-
+            });
+            self.render_footer(ui, ctx);
         });
     }
 }
@@ -68,6 +79,8 @@ fn render_header(ui: &mut eframe::egui::Ui) {
     let sep = Separator::default().spacing(20.);
     ui.add(sep);
 }
+
+
 
 fn main() {
     let native_options = NativeOptions::default();
