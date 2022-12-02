@@ -3,8 +3,8 @@ mod dbhandler;
 
 use std::time::{SystemTime};
 use std::io::Write;
-use eframe::{App, Frame, NativeOptions, run_native};
-use eframe::egui::{Button, CentralPanel, Color32, Context, Hyperlink, ScrollArea, Separator, TopBottomPanel};
+use eframe::{App, egui, Frame, NativeOptions, run_native};
+use eframe::egui::{Button, CentralPanel, Color32, Context, Hyperlink, ScrollArea, Separator, TextEdit, TopBottomPanel};
 use eframe::egui::widgets::Label;
 
 use crate::dbhandler::models::Todo;
@@ -23,13 +23,15 @@ fn prompt(name:&str) -> String {
 }
 #[derive(Default)]
 struct Todos{
-    todos: Vec<Todo>
+    todos: Vec<Todo>,
+    window_show: bool
 }
 
 impl Todos {
     fn new(cc: &eframe::CreationContext<'_>) -> Self {
         Self {
-            todos: get_todos()
+            todos: get_todos(),
+            window_show: false
         }
     }
 
@@ -60,14 +62,44 @@ impl Todos {
 
 impl App for Todos {
     fn update(&mut self, ctx: &Context, frame: &mut Frame) {
+        if self.window_show {
+            egui::Window::new("Some modal")
+                .show(ctx, |ui| {
+                    let mut title:String = String::new();
+                    let mut desc:&str = "";
+                    ui.label("Inside");
+                    ui.horizontal(|ui| {
+                        ui.label("Todo title: ");
+                        ui.add(TextEdit::singleline(&mut title).hint_text("Input title"))
+                    });
+                    ui.horizontal(|ui| {
+                        ui.label("Todo description: ");
+                        ui.add(TextEdit::singleline(&mut title).hint_text("Input title"))
+                    });
+
+                    if ui.button("Exit").clicked() {
+                        if !title.is_empty() & !desc.is_empty() {
+                            println!("{}, {}", title,desc)
+
+                        }
+                        self.window_show=false;
+                    }
+                });
+        }
         CentralPanel::default().show(ctx, |ui| {
             render_header(ui);
+            if ui.button("Add new todo").clicked() {
+                println!("click");
+                self.window_show = true;
+            }
+            let sep = Separator::default().spacing(20.);
+            ui.add(sep);
             ScrollArea::vertical().auto_shrink([false, false]).show(ui, |ui| {
                 self.render_todo_cards(ui);
-
             });
             self.render_footer(ui, ctx);
         });
+
     }
 }
 
