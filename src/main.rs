@@ -62,24 +62,24 @@ impl Todos {
 
 impl App for Todos {
     fn update(&mut self, ctx: &Context, frame: &mut Frame) {
+        let mut title:String = "".into();
+        let mut desc:String = "".into();
         if self.window_show {
             egui::Window::new("Some modal")
                 .show(ctx, |ui| {
-                    let mut title:String = String::new();
-                    let mut desc:&str = "";
                     ui.label("Inside");
                     ui.horizontal(|ui| {
                         ui.label("Todo title: ");
-                        ui.add(TextEdit::singleline(&mut title).hint_text("Input title"))
+                        ui.add(TextEdit::singleline(&mut title));
                     });
                     ui.horizontal(|ui| {
                         ui.label("Todo description: ");
-                        ui.add(TextEdit::singleline(&mut title).hint_text("Input title"))
+                        ui.add(TextEdit::singleline(&mut desc));
                     });
 
                     if ui.button("Exit").clicked() {
                         if !title.is_empty() & !desc.is_empty() {
-                            println!("{}, {}", title,desc)
+                            println!("{}, {}", title,desc);
 
                         }
                         self.window_show=false;
@@ -111,8 +111,6 @@ fn render_header(ui: &mut eframe::egui::Ui) {
     let sep = Separator::default().spacing(20.);
     ui.add(sep);
 }
-
-
 
 fn main() {
     let native_options = NativeOptions::default();

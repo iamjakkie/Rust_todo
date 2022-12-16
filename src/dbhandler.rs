@@ -2,6 +2,8 @@ use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use dotenvy::dotenv;
 use std::env;
+use crate::dbhandler::schema::todos;
+use self::schema::todos::dsl::*;
 use self::models::{Todo, NewTodo};
 
 pub mod models;
@@ -12,23 +14,18 @@ pub fn establish_connection() -> PgConnection {
 
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     PgConnection::establish(&database_url)
-        .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
+        .expect(&*format!("Error connecting to {}", database_url))
 }
 
 pub fn get_todos() -> Vec<Todo> {
-    use self::schema::todos::dsl::*;
+    let connection =  &mut establish_connection();
 
-    let connection = &mut establish_connection();
-    let results = todos
-        .load::<Todo>(connection)
-        .expect("Error loading posts");
+    todos.load::<Todo>(connection)
+        .expect("Error loading posts")
 
-    results
 }
 
 pub fn show_todos() {
-    use self::schema::todos::dsl::*;
-
     let connection = &mut establish_connection();
     let results = todos
         .limit(5)
@@ -45,10 +42,10 @@ pub fn show_todos() {
     }
 }
 
-pub fn create_todo(name: &str, description: &str) -> Todo {
-    use crate::dbhandler::schema::todos;
+pub fn create_todo(todo_name: &str, todo_description: &str) -> Todo {
 
-    let new_todo = NewTodo { name, description };
+
+    let new_todo = NewTodo { name:todo_name, description:todo_description };
 
     let connection = &mut establish_connection();
 
@@ -60,7 +57,6 @@ pub fn create_todo(name: &str, description: &str) -> Todo {
 }
 
 pub fn delete_todo(del_id: i32) {
-    use self::schema::todos::dsl::*;
 
     let connection = &mut establish_connection();
     let num_deleted = diesel::delete(todos.filter(id.eq(&del_id)))
